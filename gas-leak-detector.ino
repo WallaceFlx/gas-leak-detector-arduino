@@ -2,10 +2,10 @@
 #include "SoftwareSerial.h"
 #include <PubSubClient.h>
 
-const byte btn = 2;
-const byte buz = 13;
-const byte sensor = A0;
-const byte led = 4;
+const byte btn = 2;//Push-button pin. Be sure to select a pin that supports interruption
+const byte buz = 13;//Buzzer output pin
+const byte sensor = A0;//MQ-6 sensor input pin
+const byte led = 4;//LED output pin
 
 const char* mqttServer = "server-address"; //server address
 const int mqttPort = 1234; //server port
@@ -56,7 +56,7 @@ void mqttReConnect() {
 
 void messageController() {
   if (!isMsgSent && status) {//If the message is already sent, it won't do it again
-    format = "{\"level\":" + String(level) + ", \"place\":" + String(place) + "}";
+    format = "{\"level\":" + String(level) + ", \"place\":" + String(place) + "}";//Publishes the gas level and the facility Id
     sendMessage(topic, format.c_str());
   }
   else if (isMsgSent && !status)
@@ -105,7 +105,7 @@ void setup()
 void loop()
 {  
   monitorEnvironment();
-  
+
   if (status) {
     blink();
   }
