@@ -2,14 +2,14 @@
 #include "SoftwareSerial.h"
 #include <PubSubClient.h>
 
-const byte btn = 2;//Push-button pin. Be sure to select a pin that supports interruption
+const byte btn = 2;//Push-button pin. Make sure to select a pin that supports interruption
 const byte buz = 13;//Buzzer output pin
 const byte sensor = A0;//MQ-6 sensor input pin
 const byte led = 4;//LED output pin
 
 const char* mqttServer = "server-address"; //server address
 const int mqttPort = 1234; //server port
-const char* topic = "topic";//topic on broker
+const char* topic = "alarm/sounding";//topic on broker
 const char* clientName = "client-name";//client's name
 const int place = 2020;//facility Id
 int level = 0;//gas level
@@ -106,8 +106,10 @@ void loop()
   if (status) {
     blink();
   }
-  messageController();
+
   if (!client.connected()) {
     mqttReConnect();
-  }  
+  }
+    
+  messageController();
 }
