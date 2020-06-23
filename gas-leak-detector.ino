@@ -9,17 +9,17 @@ const byte led = 4;//LED output pin
 
 const char* mqttServer = "server-address"; //server address
 const int mqttPort = 1234; //server port
-const char* topic = "alarm/sounding";
+const char* topic = "topic";//topic on broker
 const char* clientName = "client-name";//client's name
-const int place = 2020;
-int level = 0;
+const int place = 2020;//facility Id
+int level = 0;//gas level
 
 char ssid[] = "ssid"; //your network ssid
 char pass[] = "your-password";//your network password
 
-volatile byte status = 0;
+volatile byte status = 0;//status of considerable gas level detection
 byte isMsgSent = 0;
-String format = "";
+String format = "";//formated message to be published on topic
 byte statusConnection = WL_IDLE_STATUS;
 
 SoftwareSerial Serial2(6, 7); //pins to emulate serial and communicate with ESP8266, RX/TX
@@ -48,7 +48,7 @@ void mqttReConnect() {
     if (client.connect(clientName)) {
       Serial.println("connected");
     } else {
-      Serial.print("failed, state=");
+      Serial.print("failed, state=");//prints connect state
       Serial.print(client.state());
     }
   }
@@ -56,8 +56,8 @@ void mqttReConnect() {
 
 void messageController() {
   if (!isMsgSent && status) {//If the message is already sent, it won't do it again
-    format = "{\"level\":" + String(level) + ", \"place\":" + String(place) + "}";//Publishes the gas level and the facility Id
-    sendMessage(topic, format.c_str());
+    format = "{\"level\":" + String(level) + ", \"place\":" + String(place) + "}";
+    sendMessage(topic, format.c_str());//Publishes the gas level and the facility Id
   }
   else if (isMsgSent && !status)
     isMsgSent = !isMsgSent;
@@ -92,9 +92,6 @@ void setup()
   Serial2.begin(9600);
   WiFi.init(&Serial2); //Initializes serial communication with ESP8266
 
-  if (WiFi.status() == WL_NO_SHIELD) {
-    while (true);
-  }
   while (statusConnection != WL_CONNECTED) {
     statusConnection = WiFi.begin(ssid, pass);
   }
